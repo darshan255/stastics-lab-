@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Continuous Probability Distributions: Industry Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F7F8;--surface:#FFFFFF;--ink:#16253B;--muted:#55657A;--line:#D5DEE5;--accent:#0B7A85;--accent-soft:#DDF0F2;--warm:#C9780F;--warm-soft:#FBEBD2;
+--head:"Bricolage Grotesque","Trebuchet MS",sans-serif;--body:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1A28;--surface:#17253A;--ink:#E7EEF5;--muted:#9FB0C3;--line:#2B3E57;--accent:#4FC3CE;--accent-soft:#123A44;--warm:#F0AE4D;--warm-soft:#3D2E14;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1A28;--surface:#17253A;--ink:#E7EEF5;--muted:#9FB0C3;--line:#2B3E57;--accent:#4FC3CE;--accent-soft:#123A44;--warm:#F0AE4D;--warm-soft:#3D2E14;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body)}
+h1,h2,h3{font-family:var(--head);line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700}
+h2{font-size:1.3rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:500}
+p{margin:0 0 1em;max-width:68ch}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--warm);outline-offset:2px}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100%}
+nav{background:var(--surface);border-right:1px solid var(--line);padding:24px 18px;position:sticky;top:0;align-self:start;height:100vh;overflow:auto}
+.brand{font:700 1.05rem/1.3 var(--head);margin-bottom:20px;display:block;color:var(--ink);text-decoration:none}
+nav a.link{display:block;padding:10px 12px;border-radius:8px;color:var(--ink);text-decoration:none;margin-bottom:4px;font-weight:600;border-left:4px solid transparent}
+nav a.link small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+nav a.link[aria-current="page"]{background:var(--accent-soft);border-left-color:var(--accent)}
+nav a.link:hover{background:var(--accent-soft)}
+main{padding:32px clamp(16px,4vw,48px) 64px;max-width:1000px;width:100%}
+.lead{font-size:1.15rem;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+.tile{display:block;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:10px;padding:18px;color:var(--ink);text-decoration:none}
+.tile:nth-child(2){border-top-color:var(--warm)}
+.tile:nth-child(3){border-top-color:var(--ink)}
+.tile:hover{border-color:var(--accent)}
+.tile p{color:var(--muted);margin:0;font-size:.95rem}
+.tile .fit{font-weight:600;color:var(--ink);font-size:.9rem;margin-top:10px}
+section.blk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}
+.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.param label{display:flex;justify-content:space-between;font-weight:600;font-size:.95rem}
+.param output{color:var(--accent);font-variant-numeric:tabular-nums}
+.param input[type=range]{width:100%;accent-color:var(--accent)}
+.formula{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font:italic 1.15rem/1.8 Georgia,"Times New Roman",serif;overflow-x:auto;white-space:nowrap}
+.legend{font-size:.9rem;color:var(--muted);margin:10px 0 0}
+.calc{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.calc label{display:block;font-weight:600;font-size:.95rem}
+select,button{font:inherit;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+button.go{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.go{color:#0F1A28}}
+.result{margin-top:14px;padding:14px;border-radius:8px;background:var(--warm-soft);border-left:5px solid var(--warm)}
+.chartwrap{overflow-x:auto}
+.rt{width:100%;border-collapse:collapse;font-size:.95rem}
+.rt td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.rt td:first-child{font-weight:600}
+svg.chart{width:100%;min-width:420px;height:auto;display:block}
+.note{color:var(--muted);font-size:.9rem;margin:8px 0 0}
+.crumb{margin-bottom:6px;color:var(--muted);font-size:.95rem}
+.menu-btn{display:none}
+@media (max-width:820px){
+ .app{grid-template-columns:1fr}
+ nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px}
+ .brand{margin-bottom:8px;font-size:.95rem}
+ nav .links{display:flex;gap:6px;overflow-x:auto}
+ nav a.link{white-space:nowrap;margin:0;border-left:0;border-bottom:4px solid transparent}
+ nav a.link small{display:none}
+ nav a.link[aria-current="page"]{border-bottom-color:var(--accent)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <nav aria-label="Main">
+  <a class="brand" href="#home">Continuous Probability Distributions</a>
+  <div class="links" id="links"></div>
+ </nav>
+ <main id="view" tabindex="-1"></main>
+</div>
+<script>
+const MODS={
+normal:{nav:"Normal Distribution",sub:"Manufacturing quality control",
+ title:"Normal Distribution: Manufacturing Quality Control",
+ fit:"Use it when measurements cluster around an average.",
+ problem:"A factory turns steel shafts on a lathe. The target diameter is 10 mm. No machine is perfect, so each shaft comes out slightly different. Most shafts land close to the average and very few land far away, which gives the familiar bell shape. The quality team accepts shafts between 9.85 mm and 10.10 mm and wants to know what share is accepted and what share must be scrapped or reworked.",
+ params:[{id:"target",label:"Target diameter (mm)",v:10,min:9.8,max:10.2,step:.01},{id:"mu",label:"Mean diameter (mm)",v:10,min:9.8,max:10.2,step:.005},{id:"sd",label:"Standard deviation (mm)",v:.05,min:.01,max:.1,step:.005},{id:"lo",label:"Lower limit (mm)",v:9.85,min:9.7,max:10,step:.005},{id:"hi",label:"Upper limit (mm)",v:10.1,min:10,max:10.3,step:.005}],
+ formula:"f(x) = 1 / (σ√(2π)) · e<sup>−(x − μ)² / (2σ²)</sup>&emsp;&emsp;z = (x − μ) / σ",
+ legend:"μ is the average shaft diameter. Aim to have it sit on the 10 mm target. σ is how much diameters vary. f(x) is the height of the bell at diameter x. The area under the curve between two diameters is the probability of a shaft falling in that range. z counts how many standard deviations a diameter is from the mean, and we use it to find that area.",
+ options:["Share of shafts inside the limits","Share of shafts below the lower limit (too thin)","Share of shafts above the upper limit (too thick)"],
+ hint:"Choose what to find and press Calculate. The answer and the shaded area appear here.",
+ read:"Press Calculate to see in plain words what the numbers mean for your process.",
+ xlab:"Shaft diameter (mm)",chart(p){const s=p.sd;return{pts:sample(x=>npdf(x,p.mu,s),p.mu-4*s,p.mu+4*s),marks:[[p.lo,"lower limit"],[p.hi,"upper limit"],[p.target,"target"]]}},calc:normalCalc},
+exponential:{nav:"Exponential Distribution",sub:"Cloud request inter-arrival time",
+ title:"Exponential Distribution: Cloud Request Inter-arrival Time",
+ fit:"Use it for the waiting time until the next random event.",
+ problem:"A cloud service receives requests at random moments, on average 12 requests per minute in this example. The time between two arriving requests is called the inter-arrival time. Engineers use it to judge how likely a quiet gap or a long gap is, which helps with capacity planning. Model assumption: requests arrive as a Poisson process with a constant rate λ, so the gaps follow an exponential distribution. Inter-arrival time is the gap between requests. It is not the server’s response time.",
+ params:[{id:"lam",label:"Arrival rate λ (requests per minute)",v:12,min:.5,max:120,step:.5},{id:"t",label:"Time threshold t (seconds)",v:5,min:0,max:60,step:.1},{id:"t1",label:"Time already waited t₁ (seconds)",v:5,min:0,max:60,step:.1},{id:"t2",label:"Later time t₂ (seconds, at least t₁)",v:10,min:0,max:120,step:.1}],
+ formula:"f(t) = λ e<sup>−λt</sup> (t ≥ 0)<br>Mean = 1/λ&emsp;&emsp;Variance = 1/λ²<br>P(T ≤ t) = 1 − e<sup>−λt</sup>&emsp;&emsp;P(T &gt; t) = e<sup>−λt</sup><br>P(T &gt; t₂ | T &gt; t₁) = e<sup>−λ(t₂ − t₁)</sup>",
+ legend:"T is the time from one request to the next. λ is the average number of requests per minute. Because t is entered in seconds, the page converts it with t in minutes = t in seconds ÷ 60 before using the formulas, so λ and t always use the same time unit. The model assumes a constant-rate Poisson arrival process: the rate stays the same and requests arrive independently. Real traffic with peaks or bursts may not fit it.",
+ options:["Shade P(T ≤ t): next request arrives within t","Shade P(T > t): gap is longer than t","Shade P(T > t₂ | T > t₁): conditional probability"],
+ hint:"Press Calculate to see the mean, variance and probabilities. Choose which probability to shade on the curve.",
+ read:"Memoryless property, in simple language: the exponential distribution forgets the past. If you have already waited 5 seconds with no request, the chance of waiting at least 5 more seconds is exactly the same as if you had just started waiting. A long quiet spell does not make a request “due”. Press Calculate to see this with your numbers. Remember that inter-arrival time is the gap between requests, not server response time.",
+ xlab:"Time between requests (seconds)",chart(p){const ls=p.lam/60;return{pts:sample(x=>ls*Math.exp(-ls*x),0,Math.max(5/ls,1.15*Math.max(p.t,p.t2))),marks:[[p.t,"t"]]}},calc:expCalc},
+clt:{nav:"Central Limit Theorem",sub:"Warehouse processing time",
+ title:"Central Limit Theorem: Warehouse Processing Time",
+ fit:"Use it when you work with averages of many measurements.",
+ problem:"Processing a single parcel in a warehouse is uneven: most take a few minutes, a few take very long. A manager does not track single parcels but the average time of a batch. The Central Limit Theorem says these batch averages form a bell shape, even though single times do not.",
+ params:[{id:"mu",label:"Mean time per parcel (min)",v:6,min:2,max:12,step:.5},{id:"sd",label:"Standard deviation (min)",v:4,min:1,max:8,step:.5},{id:"n",label:"Batch size n (parcels)",v:30,min:1,max:200,step:1},{id:"runs",label:"Number of simulated batches",v:1000,min:100,max:5000,step:100}],
+ formula:"X̄ ~ N( μ , σ / √n )",
+ legend:"X̄ is the average time of a batch of n parcels. It is centred on μ. Its spread σ/√n gets smaller as n grows, so bigger batches give steadier averages.",
+ options:["Simulate batch averages","Compare with the theoretical bell curve","Chance a batch average exceeds a target"],
+ hint:"Next step: the calculator will simulate many batches and draw a histogram of their averages over the bell curve.",
+ read:"Here you will see how the histogram moves toward a bell shape as you increase n.",
+ xlab:"Average batch time (min)",chart(p){const s=p.sd/Math.sqrt(p.n);return{pts:sample(x=>npdf(x,p.mu,s),p.mu-4*s,p.mu+4*s),marks:[[p.mu,"μ"]]}}}
+};
+function npdf(x,m,s){return Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI))}
+function ncdf(z){const t=1/(1+.3275911*Math.abs(z)/Math.SQRT2),y=1-((((1.061405429*t-1.453152027)*t+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-z*z/2);return z<0?(1-y)/2:(1+y)/2}
+function normalCalc(p,i){const{mu,sd,lo,hi,target}=p;if(hi<=lo)return{shade:null,res:'The upper limit must be larger than the lower limit. Adjust the sliders.',interp:'<p>Fix the limits to see the interpretation.</p>'};
+const zl=(lo-mu)/sd,zh=(hi-mu)/sd,bel=ncdf(zl),abv=1-ncdf(zh),ins=1-bel-abv;
+const pc=v=>(v<.001?(v*100).toFixed(3):(v*100).toFixed(2))+'%',per=v=>Math.round(v*10000).toLocaleString(),f=v=>+v.toFixed(2);
+let head,work,shade;
+if(i==0){head='Shafts inside the limits';work=`P(${lo} ≤ X ≤ ${hi}) = Φ(${f(zh)}) − Φ(${f(zl)}) = ${pc(ncdf(zh))} − ${pc(bel)}`;shade=[lo,hi]}
+else if(i==1){head='Shafts below the lower limit (too thin)';work=`P(X < ${lo}) = Φ(${f(zl)})`;shade=[-1e9,lo]}
+else{head='Shafts above the upper limit (too thick)';work=`P(X > ${hi}) = 1 − Φ(${f(zh)}) = 1 − ${pc(ncdf(zh))}`;shade=[hi,1e9]}
+const val=[ins,bel,abv][i];
+const res=`<strong>${head}: ${pc(val)}</strong><br>About ${per(val)} in every 10,000 shafts.<br><br>Step 1. Convert the limits to z-scores with z = (x − μ) / σ: lower z = (${lo} − ${mu}) / ${sd} = ${f(zl)}, upper z = (${hi} − ${mu}) / ${sd} = ${f(zh)}.<br>Step 2. Read the area under the bell curve: ${work} = ${pc(val)}.`;
+const off=mu-target,mid=(lo+hi)/2,best=2*ncdf((hi-lo)/(2*sd))-1,cpk=Math.min(hi-mu,mu-lo)/(3*sd);
+const side=abv>bel*1.5?'Most rejects are too thick, because the mean sits closer to the upper limit than to the lower limit.':bel>abv*1.5?'Most rejects are too thin, because the mean sits closer to the lower limit than to the upper limit.':'Rejects are split fairly evenly between thin and thick shafts.';
+const tgt=Math.abs(off)<1e-9?`The mean is on the target of ${target} mm.`:`The mean is ${(+Math.abs(off).toFixed(3))} mm ${off>0?'above':'below'} the ${target} mm target.`;
+const interp=`<p>With these settings, about <strong>${pc(ins)}</strong> of shafts are accepted. In every 10,000 shafts, about ${per(bel)} are too thin and ${per(abv)} are too thick. ${side}</p><p>${tgt} The process capability index is Cpk = ${cpk.toFixed(2)}. Many factories aim for at least 1.33, so ${cpk>=1.33?'this process meets that goal.':'this process produces more rejects than that goal allows.'}</p><p>${Math.abs(mu-mid)>.0005?`Moving the mean to the middle of the limits (${+mid.toFixed(3)} mm) would raise the accepted share to ${pc(best)}. `:''}Reducing σ, the variation of the machine, also raises the accepted share.</p>`;
+return{shade,res,interp}}
+function expCalc(p,i){const{lam,t,t1,t2}=p;if(t2<t1)return{shade:null,res:'The later time t₂ must be at least t₁. Increase t₂ or reduce t₁.',interp:'<p>Fix the times to see the interpretation.</p>'};
+const ls=lam/60,mean=1/lam,vr=1/(lam*lam),S=x=>Math.exp(-ls*x),cdf=1-S(t),sf=S(t),cond=S(t2-t1),d=t2-t1;
+const g=v=>+v.toPrecision(4),pr=v=>v.toFixed(4)+' ('+(v*100).toFixed(2)+'%)',mk=k=>i==k?' ◀ shaded':'';
+const rows=[['Rate λ in consistent units',`${g(lam)} requests/min = ${g(ls)} requests/s`],['Threshold t converted',`${g(t)} s = ${g(t/60)} min`],['Mean inter-arrival time = 1/λ',`${g(mean)} min = ${g(mean*60)} s`],['Variance = 1/λ²',`${g(vr)} min² = ${g(vr*3600)} s²`],[`P(T ≤ ${g(t)} s)${mk(0)}`,`${pr(cdf)}, probability (no units)`],[`P(T > ${g(t)} s)${mk(1)}`,`${pr(sf)}, probability (no units)`],[`P(T > ${g(t2)} s | T > ${g(t1)} s)${mk(2)}`,`${pr(cond)}, probability (no units)`]];
+const res=`<div style='overflow-x:auto'><table class='rt'>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div><p class='note'>Working: t in minutes = t in seconds ÷ 60, so λt = ${g(lam)} × ${g(t/60)} = ${g(lam*t/60)} (no units).</p>`;
+const interp=`<p>On average a request arrives every <strong>${g(mean*60)} s</strong> (${g(mean)} min). The chance that the next request arrives within ${g(t)} s is <strong>${pr(cdf)}</strong>, and the chance that the gap is longer than ${g(t)} s is <strong>${pr(sf)}</strong>. These two always add up to 1.</p><p><strong>Memoryless property.</strong> Suppose ${g(t1)} s have already passed with no new request. The chance of waiting until at least ${g(t2)} s is P(T > ${g(t2)} s | T > ${g(t1)} s) = <strong>${pr(cond)}</strong>. That equals P(T > ${g(d)} s) = ${pr(S(d))}, the chance for a brand-new wait of the extra ${g(d)} s. The time already waited has no effect, so a quiet spell does not make a request “due”.</p><p>Keep in mind: this model assumes requests arrive as a Poisson process with a constant rate λ. Inter-arrival time is the gap between requests, not the server’s response time.</p>`;
+const shade=i==2?[t2,1e9]:i==1?[t,1e9]:[0,t];
+return{shade,light:i==2?[t1,1e9]:null,marks:i==2?[[t1,'t₁'],[t2,'t₂']]:[[t,'t']],res,interp}}
+function sample(f,a,b){const o=[];for(let i=0;i<=120;i++){const x=a+(b-a)*i/120;o.push([x,f(x)])}return o}
+function fmt(v){return +v.toFixed(3)}
+function draw(el,d,xlab){
+ const W=640,H=300,L=48,R=16,T=16,B=44,xs=d.pts.map(p=>p[0]),ys=d.pts.map(p=>p[1]);
+ const x0=Math.min(...xs),x1=Math.max(...xs),y1=Math.max(...ys)*1.1;
+ const X=x=>L+(x-x0)/(x1-x0)*(W-L-R),Y=y=>H-B-y/y1*(H-B-T);
+ let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Probability density curve">';
+ s+='<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="var(--muted)"/><line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+(H-B)+'" stroke="var(--muted)"/>';
+ for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4;s+='<text x="'+X(v)+'" y="'+(H-B+18)+'" text-anchor="middle" font-size="12" fill="var(--muted)">'+fmt(v)+'</text>'}
+ s+='<text x="'+((L+W-R)/2)+'" y="'+(H-6)+'" text-anchor="middle" font-size="13" fill="var(--ink)">'+xlab+'</text>';
+ s+='<text x="14" y="'+((H-B+T)/2)+'" text-anchor="middle" font-size="13" fill="var(--ink)" transform="rotate(-90 14 '+((H-B+T)/2)+')">Density</text>';
+ const path=d.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('');
+ s+='<path d="'+path+'L'+X(x1)+' '+Y(0)+'L'+X(x0)+' '+Y(0)+'Z" fill="var(--accent-soft)"/><path d="'+path+'" fill="none" stroke="var(--accent)" stroke-width="2.5"/>';
+ [[d.light,.2],[d.shade,.55]].forEach((z,k)=>{if(!z[0])return;const a=Math.max(L,Math.min(W-R,X(z[0][0]))),b=Math.max(L,Math.min(W-R,X(z[0][1])));if(b>a)s+='<clipPath id="cp'+k+'"><rect x="'+a+'" y="0" width="'+(b-a)+'" height="'+H+'"/></clipPath><path d="'+path+'L'+X(x1)+' '+Y(0)+'L'+X(x0)+' '+Y(0)+'Z" fill="var(--warm)" fill-opacity="'+z[1]+'" clip-path="url(#cp'+k+')"/>'});
+ d.marks.forEach(m=>{if(m[0]>=x0&&m[0]<=x1)s+='<line x1="'+X(m[0])+'" y1="'+T+'" x2="'+X(m[0])+'" y2="'+(H-B)+'" stroke="var(--warm)" stroke-width="2" stroke-dasharray="5 4"/><text x="'+(X(m[0])+4)+'" y="'+(T+12)+'" font-size="12" fill="var(--warm)">'+m[1]+'</text>'});
+ el.innerHTML=s+'</svg>';
+}
+function nav(cur){
+ const items=[["home","Home","Overview"]].concat(Object.keys(MODS).map(k=>[k,MODS[k].nav,MODS[k].sub]));
+ document.getElementById("links").innerHTML=items.map(i=>'<a class="link" href="#'+i[0]+'"'+(i[0]===cur?' aria-current="page"':'')+'>'+i[1]+'<small>'+i[2]+'</small></a>').join('');
+}
+function home(){
+ return '<h1>Continuous Probability Distributions: Industry Applications</h1>'+
+ '<p class="lead">Learn three core ideas of probability by solving real problems from factories, cloud servers and warehouses. Move the sliders, watch the curve change and read what it means.</p>'+
+ '<div class="tiles">'+Object.keys(MODS).map(k=>'<a class="tile" href="#'+k+'"><h3>'+MODS[k].nav+'</h3><p>'+MODS[k].sub+'</p><p class="fit">'+MODS[k].fit+'</p></a>').join('')+'</div>'+
+ '<section class="blk" style="margin-top:24px"><h2>How each module works</h2><p>Every module follows the same six parts: the industry problem, the input parameters, the formula, a calculation section, a live chart and a plain-language interpretation.</p></section>';
+}
+function module(k){
+ const m=MODS[k],p={};
+ const html='<div class="crumb"><a href="#home">Home</a> / '+m.nav+'</div><h1>'+m.title+'</h1>'+
+ '<section class="blk"><h2>Industry problem</h2><p>'+m.problem+'</p></section>'+
+ '<section class="blk"><h2>Input parameters</h2><div class="params">'+m.params.map(q=>'<div class="param"><label for="'+q.id+'">'+q.label+' <output id="o_'+q.id+'">'+q.v+'</output></label><input type="range" id="'+q.id+'" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+q.v+'"></div>').join('')+'</div></section>'+
+ '<section class="blk"><h2>Mathematical formula</h2><div class="formula">'+m.formula+'</div><p class="legend">'+m.legend+'</p></section>'+
+ '<section class="blk"><h2>Interactive calculation</h2><div class="calc"><div><label for="what">What do you want to find?</label><select id="what">'+m.options.map(o=>'<option>'+o+'</option>').join('')+'</select></div><button class="go" id="go" type="button">Calculate</button></div><div class="result" id="res" aria-live="polite">'+m.hint+'</div></section>'+
+ '<section class="blk"><h2>Dynamic visualization</h2><div class="chartwrap" id="chart"></div><p class="note">'+(m.calc?'Press Calculate to shade the area you chose. The shading follows the sliders.':'The curve already follows your inputs. Shading and results come with the calculations.')+'</p></section>'+
+ '<section class="blk"><h2>Interpretation of results</h2><div id="interp"><p>'+m.read+'</p></div></section>';
+ return{html,mount(){
+  let on=false;const bad={},R0=document.getElementById("res").innerHTML;const upd=()=>{m.params.forEach(q=>{const nb=document.getElementById("n_"+q.id);p[q.id]=nb&&nb.value!==""&&!bad[q.id]?+nb.value:+document.getElementById(q.id).value;document.getElementById("o_"+q.id).textContent=p[q.id]});const d=m.chart(p),res=document.getElementById("res"),errs=Object.values(bad).filter(Boolean);if(errs.length)res.innerHTML=errs.join("<br>");else if(!on)res.innerHTML=R0;if(!errs.length&&on&&m.calc){const r=m.calc(p,document.getElementById("what").selectedIndex);d.shade=r.shade;d.light=r.light;if(r.marks)d.marks=r.marks;res.innerHTML=r.res;document.getElementById("interp").innerHTML=r.interp}draw(document.getElementById("chart"),d,m.xlab)};
+  m.params.forEach(q=>{const r=document.getElementById(q.id),n=document.createElement("input");n.type="number";n.id="n_"+q.id;n.min=q.min;n.max=q.max;n.step="any";n.value=q.v;n.setAttribute("aria-label",q.label+" (type a value)");n.style.cssText="width:100%;margin-top:6px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)";r.after(n);r.addEventListener("input",()=>{n.value=r.value;bad[q.id]="";upd()});n.addEventListener("input",()=>{const v=n.value===""?NaN:+n.value;bad[q.id]=isNaN(v)||v<q.min||v>q.max?q.label+" must be a number from "+q.min+" to "+q.max+".":"";if(!bad[q.id])r.value=v;upd()})});
+  document.getElementById("go").addEventListener("click",()=>{if(!m.calc){document.getElementById("res").textContent="Calculation for “"+document.getElementById("what").value+"” is not built yet. It arrives in the next step.";return}on=true;upd()});document.getElementById("what").addEventListener("change",upd);
+  upd();
+ }};
+}
+function route(){
+ const k=location.hash.slice(1);const v=MODS[k]?module(k):null;
+ nav(v?k:"home");
+ const el=document.getElementById("view");
+ el.innerHTML=v?v.html:home();
+ if(v)v.mount();
+ window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);route();
+</script>
+</body>
+</html>
